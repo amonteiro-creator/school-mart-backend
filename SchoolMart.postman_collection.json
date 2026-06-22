@@ -1,0 +1,491 @@
+{
+  "info": {
+    "name": "School Accessories Mart",
+    "description": "Complete Postman collection for the School Accessories Mart backend.\n\n**Base URL variable:** `{{baseUrl}}` — set this to `http://localhost:3000` in your Postman environment.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "school-mart-collection-v3"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "authToken", "value": "", "type": "string" },
+    { "key": "schoolId", "value": "", "type": "string" },
+    { "key": "uniformId", "value": "", "type": "string" },
+    { "key": "orderId", "value": "", "type": "string" },
+    { "key": "cartItemId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Ping",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/ping",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ping"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Parent",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Parent\",\n  \"email\": \"parent@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.data?.token) {",
+                  "    pm.collectionVariables.set('authToken', body.data.token);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@schoolmart.com\",\n  \"password\": \"Admin@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Schools",
+      "item": [
+        {
+          "name": "Create School",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Greenwood High\",\n  \"address\": \"123 School Lane\",\n  \"contact_number\": \"1234567890\",\n  \"email\": \"info@greenwood.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Schools",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"search\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "list"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get School Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/{{schoolId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "{{schoolId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update School",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Greenwood High Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/{{schoolId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "{{schoolId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete School",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/{{schoolId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "{{schoolId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Uniforms",
+      "item": [
+        {
+          "name": "Create Uniform",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_id\": \"{{schoolId}}\",\n  \"name\": \"Summer Shirt\",\n  \"category\": \"Summer Wear\",\n  \"price\": 25.00,\n  \"sizes\": \"[\\\"S\\\", \\\"M\\\", \\\"L\\\"]\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/uniforms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "uniforms"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Uniforms",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_id\": \"{{schoolId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/uniforms/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "uniforms", "list"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Uniform Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/uniforms/{{uniformId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "uniforms", "{{uniformId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Active Cart",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"uniform_id\": \"{{uniformId}}\",\n  \"quantity\": 2,\n  \"size\": \"M\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/{{cartItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "{{cartItemId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Cart Item",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/{{cartItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cart", "{{cartItemId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order from Cart",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/list?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "list"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "{{orderId}}", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Delivery",
+      "item": [
+        {
+          "name": "Assign Tracking",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHIPPED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "{{orderId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Track Delivery",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{authToken}}", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery/{{orderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "delivery", "{{orderId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
